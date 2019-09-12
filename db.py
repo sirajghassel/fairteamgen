@@ -10,6 +10,12 @@ mydb = mysql.connector.connect(
 )
 
 def execute(query, values=None):
+    mydb = mysql.connector.connect(
+        host= MYSQL['host'],
+        user=MYSQL['user'],
+        passwd=MYSQL['passwd'],
+        database=MYSQL['database']
+    )
     mycursor = mydb.cursor()
     if values == None:
         mycursor.execute(query)
@@ -19,6 +25,12 @@ def execute(query, values=None):
     return mycursor
 
 def executemany(query, values=None):
+    mydb = mysql.connector.connect(
+        host= MYSQL['host'],
+        user=MYSQL['user'],
+        passwd=MYSQL['passwd'],
+        database=MYSQL['database']
+    )
     mycursor = mydb.cursor()
     if values == None:
         mycursor.executemany(query)
@@ -28,6 +40,12 @@ def executemany(query, values=None):
     return mycursor
 
 def fetchall(query):
+    mydb = mysql.connector.connect(
+        host= MYSQL['host'],
+        user=MYSQL['user'],
+        passwd=MYSQL['passwd'],
+        database=MYSQL['database']
+    )
     mycursor = mydb.cursor()
     mycursor.execute(query)
     columns = [col[0] for col in mycursor.description]
@@ -35,6 +53,12 @@ def fetchall(query):
     return rows
 
 def fetchone(query):
+    mydb = mysql.connector.connect(
+        host= MYSQL['host'],
+        user=MYSQL['user'],
+        passwd=MYSQL['passwd'],
+        database=MYSQL['database']
+    )
     mycursor = mydb.cursor()
     mycursor.execute(query)
     columns = [col[0] for col in mycursor.description]

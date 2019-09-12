@@ -1,0 +1,11 @@
+.event .row {
+  margin-bottom: 0;
+}
+
+.materialize-textarea.event-notes {
+  height: 150px
+}
+
+.card-panel.teal a {
+  color: white
+}
