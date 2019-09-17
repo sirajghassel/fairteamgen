@@ -63,7 +63,10 @@ def fetchone(query):
     mycursor.execute(query)
     columns = [col[0] for col in mycursor.description]
     result = mycursor.fetchone()
-    row = {}
-    for i, x in enumerate(result):
-        row[columns[i]] = x
+    if not result:
+        row = None
+    else:
+        row = {}
+        for i, x in enumerate(result):
+            row[columns[i]] = x
     return row
