@@ -1,3 +1,7 @@
+.app {
+  padding-bottom: 100px;
+}
+
 .event .row {
   margin-bottom: 0;
 }
@@ -8,4 +12,46 @@
 
 .card-panel.teal a {
   color: white
+}
+
+.nav-wrapper {
+  padding: 0 50px;
+}
+
+.navbar-fixed {
+  margin-bottom: 50px;
+  top: 30px
+}
+
+.tape {
+  width: 100%;
+  background: red;
+  color: white;
+  text-shadow: 1px 1px black;
+  text-align: center;
+  position: fixed;
+  z-index: 1000000;
+}
+
+.sponsor {
+  float: right;
+}
+
+.footer {
+  width: 100%;
+  background: #26a69a;
+  color: white;
+  text-shadow: 1px 0px black;
+  position: fixed;
+  bottom: 0;
+  padding: 10px;
+  z-index: 1000000;
+}
+
+.message {
+  margin: 4px;
+}
+
+body {
+  background: #eeeeee;
 }
