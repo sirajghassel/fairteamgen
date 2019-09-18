@@ -9,9 +9,9 @@ parser.add_argument('max_teams')
 
 class Events(Resource):
     def get(self, eventpin):
-        sql = "SELECT * FROM events WHERE event_pin= '{0}'"
-        sql = sql.format(eventpin)
-        myresult = fetchone(sql)
+        sql = "SELECT * FROM events WHERE event_pin= %s"
+        vals = (eventpin,)
+        myresult = fetchone(sql, vals)
         if myresult is None:
             return {'status': 'wrong pin'}, 404
         else:
@@ -20,9 +20,9 @@ class Events(Resource):
     def post(self):
         args = parser.parse_args()
         eventpin = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))
-        sql = "INSERT INTO events (event_pin,notes,max_players,max_teams) VALUES ('{0}','{1}','{2}','{3}')"
-        sql = sql.format(eventpin, args['notes'], args['max_players'],args['max_teams'])
-        execute(sql)
+        sql = "INSERT INTO events (event_pin,notes,max_players,max_teams) VALUES (%s,%s,%s,%s)"
+        vals = (eventpin, args['notes'], args['max_players'],args['max_teams'],)
+        execute(sql, vals)
         return {
             'status': 'success',
             'event_pin': eventpin

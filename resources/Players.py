@@ -9,9 +9,9 @@ parser.add_argument('age', required=True)
 
 class Players(Resource):
     def get(self, eventpin): #players will be linked via an eventpin
-        sql = "SELECT * FROM players  WHERE event_pin= '{0}'"
-        sql = sql.format(eventpin)
-        myresult = fetchall(sql)
+        sql = "SELECT * FROM players  WHERE event_pin= %s"
+        vals = (eventpin,)
+        myresult = fetchall(sql, vals)
         if myresult is None:
             return {'status': 'wrong pin'}, 404
         else:
@@ -19,7 +19,7 @@ class Players(Resource):
 
     def post(self, eventpin):
         args = parser.parse_args()
-        sql = "INSERT INTO players (name, age, skill, frequency, event_pin) VALUES ('{0}','{1}','{2}','{3}', '{4}')"
-        sql = sql.format(args['name'], args['age'], args['skill'], args['frequency'], eventpin)
-        execute(sql)
+        sql = "INSERT INTO players (name, age, skill, frequency, event_pin) VALUES (%s,%s,%s,%s, %s)"
+        vals = sql.format(args['name'], args['age'], args['skill'], args['frequency'], eventpin,)
+        execute(sql, vals)
         return {'status': 'success'}

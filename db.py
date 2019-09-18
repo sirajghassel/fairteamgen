@@ -39,13 +39,15 @@ def executemany(query, values=None):
     mydb.commit()
     return mycursor
 
-def fetchall(query):
+def fetchall(query, values=None):
     mydb = mysql.connector.connect(
         host= MYSQL['host'],
         user=MYSQL['user'],
         passwd=MYSQL['passwd'],
         database=MYSQL['database']
     )
+    if values == None:
+        mycursor.execute(sql, values)
     mycursor = mydb.cursor()
     mycursor.execute(query)
     columns = [col[0] for col in mycursor.description]
@@ -59,6 +61,8 @@ def fetchone(query):
         passwd=MYSQL['passwd'],
         database=MYSQL['database']
     )
+    if values == None:
+        mycursor.execute(sql, values)
     mycursor = mydb.cursor()
     mycursor.execute(query)
     columns = [col[0] for col in mycursor.description]
