@@ -9,7 +9,7 @@ parser.add_argument('max_teams')
 
 class Events(Resource):
     def get(self, eventpin):
-        sql = "SELECT * FROM events WHERE event_pin= %s"
+        sql = "SELECT * FROM events WHERE event_pin=%s"
         vals = (eventpin,)
         myresult = fetchone(sql, vals)
         if myresult is None:
