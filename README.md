@@ -15,6 +15,18 @@ $ source activate venv/bin/activate
 $ pip3 intsall -r requirements.txt
 ```
 
+Create database and run `db.sql` file.
+
+Create a `config.py` and paste this in it.
+```python
+MYSQL = {
+	'user': 'root',
+	'passwd': '',
+	'host': 'localhost',
+	'database': 'dbname'
+}
+```
+
 #### Frontend
 ```sh
 $ cd static
