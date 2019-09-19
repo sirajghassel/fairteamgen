@@ -1,3 +1,5 @@
+import sys
+
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
@@ -14,4 +16,8 @@ api.add_resource(Players, '/api/players/<string:eventpin>')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug = True
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "prod":
+            debug = False
+    app.run(debug=debug)
