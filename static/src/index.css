@@ -2,6 +2,19 @@
   padding-bottom: 100px;
 }
 
+.team-table {
+  margin-bottom: 25px;
+}
+
+th {
+  background: #26a69a;
+  border: #26a69a;
+  color: white;
+  padding: 5px;
+  border-radius: 0;
+  text-shadow: 1px 1px black;
+}
+
 .event .row {
   margin-bottom: 0;
 }
@@ -20,7 +33,8 @@
 
 .navbar-fixed {
   margin-bottom: 50px;
-  top: 30px
+  top: 30px;
+  text-shadow: 1px 1px black;
 }
 
 .tape {

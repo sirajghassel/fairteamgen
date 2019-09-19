@@ -11,6 +11,7 @@ class Event extends React.Component {
         player_skill: "",
         player_frequency: "",
         teams: [],
+        event_exists: null,
         players: []
       }
     }
@@ -23,7 +24,6 @@ class Event extends React.Component {
     getEventPlayers = () => {
       axios.get("/api/players/"+this.props.match.params.eventpin).then(
         response => {
-          console.log(response.data)
           this.handlePlayers(response.data)
         }
       )
@@ -31,37 +31,40 @@ class Event extends React.Component {
 
     handlePlayers = (players) => {
       const max_teams = this.state.event_info.max_teams
+      
       players.forEach((player, player_index) => {
         players[player_index]['score'] = Number((player['age'] + player['skill'] + player['frequency']) / 3)
-
       })
-      delete player
+
       players.sort(function(a, b){
         var keyA = a.score,
             keyB = b.score;
-        // Compare the 2 dates
         if(keyA < keyB) return 1;
         if(keyA > keyB) return -1;
         return 0;
       })
-      delete a,b
 
       let team_aggregate = [0,0]
       let teams = [
         [],
         []
       ]
-      // for (let team_index = 0; team_index < max_teams; team_index++) {
-      //   team_aggregate[team_index] = 0
-      //   teams[team_index] = []
-      // }
-      for(let player_i = 0; player_i < players.length; player_i++){
+
+      for (let team_index = 0; team_index < max_teams; team_index++) {
+        team_aggregate[team_index] = 0
+        teams[team_index] = []
+      }
+      
+      const length = players.length
+      const roster = []
+      for(let player_i = 0; player_i < length; player_i++){
         let index = team_aggregate.indexOf(Math.min(...team_aggregate))
         let player = players.shift()
         team_aggregate[index] += player.score
         teams[index].push(player)
+        roster.push(player)
       }
-      this.setState({players: players})
+      this.setState({players: roster})
       this.setState({teams: teams})
     }
 
@@ -70,36 +73,53 @@ class Event extends React.Component {
         response => {
           this.setState({event_info: response.data})
         }
-      )
+      ).catch(error => {
+        if(error.response.status === 404){
+          window.location.href = window.location.origin
+          this.setState({event_exists: false})
+        }
+      })
     }
 
-    playersTable = () => {
+    teamTable = (team) => {
+      let team_aggregate = 0
+      team.forEach(player => {
+        team_aggregate += player.score
+      })
       return (
-        <table>
-        <thead>
-          <tr>
-              <th>Name</th>
-              <th>Age</th>
-              <th>Skill</th>
-              <th>Frequency</th>
-              <th>Score</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {
-            this.state.players.map(player => (
-              <tr key={player.player_id}>
-                <td>{player.name}</td>
-                <td>{player.age}</td>
-                <td>{player.skill}</td>
-                <td>{player.frequency}</td>
-                <td>{player.score}</td>
+        <div className="col s3">
+          <table className="team-table">
+            <thead>
+              <tr>
+                  <th>Name</th>
+                  {/* <th>Age</th>
+                  <th>Skill</th>
+                  <th>Frequency</th> */}
+                  <th>Score</th>
               </tr>
-            ))
-          }
-        </tbody>
-      </table>
+            </thead>
+
+            <tbody>
+              {
+                team.map(player => (
+                  <tr key={player.player_id}>
+                    <td>{player.name}</td>
+                    {/* <td>{player.age}</td>
+                    <td>{player.skill}</td>
+                    <td>{player.frequency}</td> */}
+                    <td>{Math.round(player.score * 100) / 100}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <th><b>Team Score: </b></th>
+                <th><b>{Math.round(team_aggregate * 100) / 100}</b></th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       )
     }
 
@@ -133,7 +153,7 @@ class Event extends React.Component {
         frequency: this.state.player_frequency,
       }).then(
         response => {
-          console.log(response.data)
+          this.getEventPlayers()
         }
       )
     }
@@ -142,13 +162,11 @@ class Event extends React.Component {
       return(
         <form>
            <div className="row">
-            <div className="col s3">
-              <div className="input-field col s12">
-                <input value={this.state.player_name} onChange={this.hanldePlayerNameChange} type="text" className="validate" />
-                <label>Player Name</label>
-              </div>
+            <div className="input-field">
+              <input value={this.state.player_name} onChange={this.hanldePlayerNameChange} type="text" className="validate" />
+              <label>Player Name</label>
             </div>
-            <div className="col s3">
+            <div>
               <label>Select Your Age</label>
               <select defaultValue="" onChange={this.handleAgeChange} className="browser-default">
                 <option value="" disabled>Choose your age group</option>
@@ -163,7 +181,7 @@ class Event extends React.Component {
                 <option value="1">greter than 47</option>
               </select>
             </div>
-            <div className="col s3">
+            <div>
               <label>How often do you play?</label>
               <select defaultValue={""}  onChange={this.handleFrequencyChange} className="browser-default">
                 <option value="" disabled>Choose your playing frequency</option>
@@ -174,7 +192,7 @@ class Event extends React.Component {
                 <option value="1">I haven't played in two months or more</option>
               </select>
             </div>
-            <div className="col s3">
+            <div>
               <label>What is your skill level?</label>
               <select defaultValue={""} onChange={this.handleSkillChange} className="browser-default">
                 <option value="" disabled>Choose your skill level</option>
@@ -185,11 +203,11 @@ class Event extends React.Component {
                 <option value="1">new to the sport</option>
               </select>
             </div>
-          </div>
-          <div className="row">
-             <div className="input-field col s12">
-               <button onClick={this.submitPlayer} className="waves-effect waves-light btn">Submit</button>
-             </div>
+            <div>
+            <div className="input-field">
+                <button onClick={this.submitPlayer} className="waves-effect waves-light btn">Submit</button>
+            </div>
+         </div>
           </div>
         </form>
       )
@@ -197,37 +215,65 @@ class Event extends React.Component {
 
     eventTable = () => {
       return(
-        <table>
-        <thead>
-          <tr>
-              <th>Event link</th>              
-              <th>Event Notes</th>
-              <th>Max Players</th>
-              <th>Max Teams</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td><a href={window.location.origin + "/event/" + this.props.match.params.eventpin}>
-                {window.location.origin}/event/{this.props.match.params.eventpin}
-               </a></td>
-            <td>{this.state.event_info.notes}</td>
-            <td>{this.state.event_info.max_players}</td>
-            <td>{this.state.event_info.max_teams}</td>
-          </tr>
-        </tbody>
-      </table>
+        <div className="row">
+          <div className="col s12">
+            <table>
+              <thead>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Event Link: </b></td>
+                  <td>
+                    <a href={window.location.origin + "/event/" + this.props.match.params.eventpin}>
+                      {window.location.origin + "/event/" + this.props.match.params.eventpin}
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Max. Teams: </b></td>
+                  <td>{this.state.event_info.max_teams}</td>
+                </tr>
+                <tr>
+                  <td><b>Max. PLayers: </b></td>
+                  <td>{this.state.event_info.max_players}</td>
+                </tr>
+                <tr>
+                  <td><b>Event Notes: </b></td>
+                  <td>{this.state.event_info.notes}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       )
     }
 
     render(){
-      console.log()
+
       return (
         <div>
-          {this.eventTable()}
-          {this.playersForm()}
-          {this.playersTable()}
+          <div className="row">
+            <div className="col s6">
+              <h4>Event Info</h4>
+              {this.eventTable()}
+            </div>
+            <div className="col s6">
+              <h4>Add a Player</h4>
+              {this.playersForm()}
+            </div>
+          </div>
+          <div className="row">
+            <div className="col s12">
+              <h4>Sorted Teams</h4>
+            </div>
+            {
+              this.state.teams.map((team, i) => (
+                <div key={i}>
+                  {this.teamTable(team)}
+                </div>
+              ))
+            }
+          </div>
         </div>
       );
     }
