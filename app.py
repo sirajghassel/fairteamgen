@@ -16,8 +16,4 @@ api.add_resource(Players, '/api/players/<string:eventpin>')
 
 
 if __name__ == '__main__':
-    debug = True
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "prod":
-            debug = False
-    app.run(debug=debug)
+    app.run(debug=True)
