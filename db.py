@@ -6,7 +6,8 @@ mydb = mysql.connector.connect(
     host= MYSQL['host'],
     user=MYSQL['user'],
     passwd=MYSQL['passwd'],
-    database=MYSQL['database']
+    database=MYSQL['database'],
+    auth_plugin='mysql_native_password'
 )
 
 def execute(query, values=None):
@@ -14,7 +15,8 @@ def execute(query, values=None):
         host= MYSQL['host'],
         user=MYSQL['user'],
         passwd=MYSQL['passwd'],
-        database=MYSQL['database']
+        database=MYSQL['database'],
+        auth_plugin='mysql_native_password'
     )
     mycursor = mydb.cursor()
     if values == None:
@@ -29,7 +31,8 @@ def executemany(query, values=None):
         host= MYSQL['host'],
         user=MYSQL['user'],
         passwd=MYSQL['passwd'],
-        database=MYSQL['database']
+        database=MYSQL['database'],
+        auth_plugin='mysql_native_password'
     )
     mycursor = mydb.cursor()
     if values == None:
@@ -44,7 +47,8 @@ def fetchall(query, values=None):
         host= MYSQL['host'],
         user=MYSQL['user'],
         passwd=MYSQL['passwd'],
-        database=MYSQL['database']
+        database=MYSQL['database'],
+        auth_plugin='mysql_native_password'
     )
     mycursor = mydb.cursor()
     if values == None:
@@ -60,7 +64,8 @@ def fetchone(query, values):
         host= MYSQL['host'],
         user=MYSQL['user'],
         passwd=MYSQL['passwd'],
-        database=MYSQL['database']
+        database=MYSQL['database'],
+        auth_plugin='mysql_native_password'
     )
     mycursor = mydb.cursor()
     if values == None:
